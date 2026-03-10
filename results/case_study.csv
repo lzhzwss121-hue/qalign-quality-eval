@@ -1,0 +1,13 @@
+case_type,image_name,base_name,degradation,psnr,ssim,lpips,qalign_score,gt_path,pred_path
+PSNR_high_QAlign_low,facex4.png,face,bicubic,29.009885,0.704344,0.410156,1.322266,./data/images/hr/face.png,./data/images/bicubic/facex4.png
+PSNR_high_QAlign_low,face.png,face,blur,29.689496,0.740213,0.358409,1.828125,./data/images/hr/face.png,./data/images/blur/face.png
+PSNR_high_QAlign_low,lennax4.png,lenna,bicubic,28.490495,0.759582,0.345617,2.146484,./data/images/hr/lenna.png,./data/images/bicubic/lennax4.png
+PSNR_low_QAlign_high,ppt3x4.png,ppt3,bicubic,20.229666,0.809223,0.327005,2.757812,./data/images/hr/ppt3.png,./data/images/bicubic/ppt3x4.png
+PSNR_low_QAlign_high,monarch.png,monarch,noise,24.638734,0.474121,0.401736,3.845703,./data/images/hr/monarch.png,./data/images/noise/monarch.png
+PSNR_low_QAlign_high,zebra.png,zebra,noise,24.85584,0.699682,0.103875,3.880859,./data/images/hr/zebra.png,./data/images/noise/zebra.png
+LPIPS_good_QAlign_low,face.png,face,noise,25.22565,0.550761,0.215505,1.959961,./data/images/hr/face.png,./data/images/noise/face.png
+LPIPS_good_QAlign_low,baboon.png,baboon,noise,24.73237,0.77972,0.074541,2.816406,./data/images/hr/baboon.png,./data/images/noise/baboon.png
+LPIPS_good_QAlign_low,foremanx4.png,foreman,bicubic,26.233482,0.844715,0.329766,1.6875,./data/images/hr/foreman.png,./data/images/bicubic/foremanx4.png
+LPIPS_bad_QAlign_high,monarch.png,monarch,noise,24.638734,0.474121,0.401736,3.845703,./data/images/hr/monarch.png,./data/images/noise/monarch.png
+LPIPS_bad_QAlign_high,baboonx4.png,baboon,bicubic,20.32462,0.431628,0.631094,1.861328,./data/images/hr/baboon.png,./data/images/bicubic/baboonx4.png
+LPIPS_bad_QAlign_high,ppt3.png,ppt3,noise,26.021339,0.539473,0.22312,3.736328,./data/images/hr/ppt3.png,./data/images/noise/ppt3.png
