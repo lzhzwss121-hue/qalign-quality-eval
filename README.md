@@ -45,3 +45,42 @@ results/
   case_study.csv
   figures/
   experimental/
+
+
+Example Usage
+
+1. Degradation evaluation
+python scripts/run_eval.py \
+  --data_root ./data/images \
+  --output_csv ./results/raw_metrics.csv \
+  --degradations bicubic blur noise
+
+2. Correlation analysis
+python scripts/analyze_metrics.py \
+  --input_csv ./results/raw_metrics.csv \
+  --output_csv ./results/summary_stats.csv
+
+3. Plotting
+python scripts/plot_results.py \
+  --raw_csv ./results/raw_metrics.csv \
+  --summary_csv ./results/summary_stats.csv \
+  --fig_dir ./results/figures
+
+4. Case-study mining
+python scripts/make_case_study.py \
+  --input_csv ./results/raw_metrics.csv \
+  --output_csv ./results/case_study.csv
+
+Notes
+
+This repository focuses on evaluation and analysis, rather than training new restoration models.
+
+The restoration branch is currently kept as an experimental extension, since restoration benchmarking is highly sensitive to:
+
+-GT/reference consistency
+
+-output scale alignment
+
+-crop-border protocol
+
+-benchmark evaluation settings
