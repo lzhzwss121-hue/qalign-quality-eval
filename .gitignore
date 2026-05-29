@@ -4,14 +4,20 @@ __pycache__/
 *.pyd
 .ipynb_checkpoints/
 .DS_Store
+.pytest_cache/
+.mypy_cache/
 
-data/
+data/*
+!data/
+!data/README.md
 uploads/
 *.tar.gz
 *.zip
 *.pth
 *.pt
 *.ckpt
+*.safetensors
+*.log
 
 .env
 venv/
