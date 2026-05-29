@@ -62,25 +62,26 @@ as a final benchmark comparison.
 B100, Urban100, and Manga109 across X2, X3, and X4 bicubic LR inputs.
 
 `sr_bicubic/summary_by_dataset_scale.csv` contains aggregate RGB and Y-channel
-PSNR/SSIM values. The headline Y-channel cropped results are:
+PSNR/SSIM values. The benchmark mod-crops HR images to `LR_size * scale` before
+comparison. The headline Y-channel cropped results are:
 
 | Dataset | Scale | n | Mean PSNR-Y | Mean SSIM-Y |
 | --- | ---: | ---: | ---: | ---: |
-| Set5 | X2 | 5 | 32.963 | 0.933 |
-| Set5 | X3 | 5 | 27.915 | 0.845 |
-| Set5 | X4 | 5 | 27.720 | 0.815 |
-| Set14 | X2 | 14 | 29.203 | 0.869 |
-| Set14 | X3 | 14 | 25.097 | 0.738 |
-| Set14 | X4 | 14 | 24.991 | 0.695 |
-| B100 | X2 | 100 | 26.714 | 0.795 |
-| B100 | X3 | 100 | 26.119 | 0.738 |
-| B100 | X4 | 100 | 24.879 | 0.662 |
-| Urban100 | X2 | 100 | 25.549 | 0.832 |
-| Urban100 | X3 | 100 | 22.751 | 0.711 |
-| Urban100 | X4 | 100 | 21.922 | 0.645 |
-| Manga109 | X2 | 109 | 30.106 | 0.935 |
-| Manga109 | X3 | 109 | 25.472 | 0.846 |
-| Manga109 | X4 | 109 | 22.279 | 0.740 |
+| Set5 | X2 | 5 | 33.673 | 0.937 |
+| Set5 | X3 | 5 | 30.403 | 0.881 |
+| Set5 | X4 | 5 | 28.429 | 0.823 |
+| Set14 | X2 | 14 | 30.323 | 0.881 |
+| Set14 | X3 | 14 | 27.628 | 0.794 |
+| Set14 | X4 | 14 | 26.085 | 0.722 |
+| B100 | X2 | 100 | 29.552 | 0.857 |
+| B100 | X3 | 100 | 27.202 | 0.759 |
+| B100 | X4 | 100 | 25.954 | 0.685 |
+| Urban100 | X2 | 100 | 26.870 | 0.850 |
+| Urban100 | X3 | 100 | 24.455 | 0.751 |
+| Urban100 | X4 | 100 | 23.136 | 0.673 |
+| Manga109 | X2 | 109 | 30.816 | 0.938 |
+| Manga109 | X3 | 109 | 26.951 | 0.864 |
+| Manga109 | X4 | 109 | 24.896 | 0.795 |
 
 Generated SR figures:
 

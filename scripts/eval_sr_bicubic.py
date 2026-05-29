@@ -35,6 +35,17 @@ def resize_bicubic(image: np.ndarray, size: tuple[int, int]) -> np.ndarray:
     return np.asarray(pil.resize(size, Image.Resampling.BICUBIC))
 
 
+def mod_crop_to_lr_scale(hr: np.ndarray, lr: np.ndarray, scale: int) -> np.ndarray:
+    target_height = lr.shape[0] * scale
+    target_width = lr.shape[1] * scale
+    if hr.shape[0] < target_height or hr.shape[1] < target_width:
+        raise ValueError(
+            f"HR image is smaller than LR*scale target: "
+            f"hr={hr.shape[:2]}, target={(target_height, target_width)}"
+        )
+    return hr[:target_height, :target_width, :]
+
+
 def crop_border(image: np.ndarray, border: int) -> np.ndarray:
     if border <= 0:
         return image
@@ -69,6 +80,7 @@ def find_lr_image(lr_images: dict[str, Path], hr_path: Path) -> Path | None:
 def evaluate_pair(hr_path: Path, lr_path: Path, scale: int, crop: int) -> dict:
     hr = load_rgb(hr_path)
     lr = load_rgb(lr_path)
+    hr = mod_crop_to_lr_scale(hr, lr, scale)
     pred = resize_bicubic(lr, (hr.shape[1], hr.shape[0]))
 
     hr_rgb = crop_border(hr, crop)
@@ -82,8 +94,8 @@ def evaluate_pair(hr_path: Path, lr_path: Path, scale: int, crop: int) -> dict:
         "crop_border": crop,
         "psnr_rgb": calculate_psnr(hr_rgb, pred_rgb, 255.0),
         "ssim_rgb": calculate_ssim(hr_rgb, pred_rgb, 255.0, channel_axis=2),
-        "psnr_y": calculate_psnr(hr_y, pred_y, 235.0),
-        "ssim_y": calculate_ssim(hr_y, pred_y, 235.0),
+        "psnr_y": calculate_psnr(hr_y, pred_y, 255.0),
+        "ssim_y": calculate_ssim(hr_y, pred_y, 255.0),
     }
 
 

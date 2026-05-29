@@ -100,18 +100,21 @@ MPLCONFIGDIR=/tmp/qalign_mpl_cache python scripts/plot_sr_bicubic.py \
   --fig_dir ./results/figures
 ```
 
-The script upscales each LR image to the HR size with bicubic interpolation and
-computes RGB metrics plus Y-channel metrics. The default Y-channel crop border is
-equal to the SR scale.
+The script first mod-crops each HR image to `LR_size * scale`, then upscales the
+LR image with bicubic interpolation and computes RGB metrics plus Y-channel
+metrics. The Y-channel metrics use 255 as the data range. The default Y-channel
+crop border is equal to the SR scale.
 
 ## Important Evaluation Details
 
-- Predicted images are resized to match the reference image if needed.
+- Predicted images are resized to match the protocol-cropped reference image if
+  needed.
 - LPIPS is computed on RGB tensors normalized to `[-1, 1]`.
 - Q-Align is scored on the predicted/restored image only.
 - Restoration evaluation supports crop-border evaluation through
   `--crop_border`.
-- SR bicubic evaluation reports both RGB and cropped Y-channel PSNR/SSIM.
+- SR bicubic evaluation reports both RGB and cropped Y-channel PSNR/SSIM after
+  HR mod-cropping to `LR_size * scale`.
 
 ## Known Sources of Error
 

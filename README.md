@@ -147,19 +147,20 @@ python scripts/plot_sr_bicubic.py \
   --fig_dir ./results/figures
 ```
 
-The script reports both RGB full-reference metrics and Y-channel cropped
-metrics. The Y-channel metric uses a crop border equal to the SR scale, matching
-common SR evaluation practice.
+The script first mod-crops each HR image to `LR_size * scale`, then upsamples the
+LR image with bicubic interpolation. It reports both RGB full-reference metrics
+and Y-channel cropped metrics. The Y-channel metric uses 255 as the data range
+and a crop border equal to the SR scale, matching common SR evaluation practice.
 
 Current X4 Y-channel PSNR results:
 
 | Dataset | n | X4 PSNR-Y | X4 SSIM-Y |
 | --- | ---: | ---: | ---: |
-| Set5 | 5 | 27.720 | 0.815 |
-| Set14 | 14 | 24.991 | 0.695 |
-| B100 | 100 | 24.879 | 0.662 |
-| Manga109 | 109 | 22.279 | 0.740 |
-| Urban100 | 100 | 21.922 | 0.645 |
+| Set5 | 5 | 28.429 | 0.823 |
+| Set14 | 14 | 26.085 | 0.722 |
+| B100 | 100 | 25.954 | 0.685 |
+| Manga109 | 109 | 24.896 | 0.795 |
+| Urban100 | 100 | 23.136 | 0.673 |
 
 ## Restoration Extension
 
