@@ -66,6 +66,44 @@ Validate saved result files:
 python scripts/validate_results.py
 ```
 
+## SR Bicubic Benchmark
+
+The SR extension expects standard test-set folders with this layout:
+
+```text
+datasets/imageSR/
+  Set5/
+    HR/
+    LR_bicubic/X2/
+    LR_bicubic/X3/
+    LR_bicubic/X4/
+  Set14/
+  B100/
+  Urban100/
+  Manga109/
+```
+
+Run the benchmark:
+
+```bash
+python scripts/eval_sr_bicubic.py \
+  --dataset_root /path/to/datasets/imageSR \
+  --output_dir ./results/sr_bicubic
+```
+
+Generate plots and a failure-case board:
+
+```bash
+MPLCONFIGDIR=/tmp/qalign_mpl_cache python scripts/plot_sr_bicubic.py \
+  --summary_csv ./results/sr_bicubic/summary_by_dataset_scale.csv \
+  --failure_csv ./results/sr_bicubic/failure_cases.csv \
+  --fig_dir ./results/figures
+```
+
+The script upscales each LR image to the HR size with bicubic interpolation and
+computes RGB metrics plus Y-channel metrics. The default Y-channel crop border is
+equal to the SR scale.
+
 ## Important Evaluation Details
 
 - Predicted images are resized to match the reference image if needed.
@@ -73,6 +111,7 @@ python scripts/validate_results.py
 - Q-Align is scored on the predicted/restored image only.
 - Restoration evaluation supports crop-border evaluation through
   `--crop_border`.
+- SR bicubic evaluation reports both RGB and cropped Y-channel PSNR/SSIM.
 
 ## Known Sources of Error
 

@@ -14,6 +14,7 @@ trustworthy multimodal evaluation.
 - **Perceptual metric:** LPIPS
 - **Zero-shot VLM quality score:** Q-Align / OneAlign
 - **Image degradation settings:** bicubic downsampling, blur, and noise
+- **SR benchmark extension:** Set5, Set14, B100, Urban100, and Manga109
 - **Experimental restoration extension:** SwinIR and MambaIRv2 output evaluation
 
 This repository focuses on evaluation and analysis rather than training new
@@ -22,7 +23,8 @@ restoration models.
 ## Key Findings
 
 The current pilot benchmark contains 42 degraded images across three degradation
-types and 28 restoration outputs for the restoration extension.
+types, 984 bicubic super-resolution benchmark samples, and 28 restoration outputs
+for the restoration extension.
 
 | Analysis | Main Observation |
 | --- | --- |
@@ -30,6 +32,7 @@ types and 28 restoration outputs for the restoration extension.
 | Overall SSIM vs Q-Align | Weak correlation: Pearson 0.107, Spearman 0.184 |
 | Overall LPIPS vs Q-Align | Moderate inverse correlation: Pearson -0.639, Spearman -0.669 |
 | Bicubic / blur subsets | Q-Align aligns more with LPIPS than with PSNR |
+| SR bicubic benchmark | X4 bicubic is hardest on Urban100 and Manga109 |
 | Restoration extension | Benchmark consistency issues can strongly affect metric interpretation |
 
 These findings suggest that zero-shot VLM-based quality scores capture a
@@ -46,6 +49,8 @@ scripts/
   make_case_study.py                  # Disagreement-case mining
   make_case_board_compact.py          # Visual case board generation
   validate_results.py                 # Lightweight result-file validation
+  eval_sr_bicubic.py                  # Standard SR bicubic benchmark evaluation
+  plot_sr_bicubic.py                  # SR benchmark plots and failure board
   experimental/
     generate_degradations.py
     run_eval_restoration.py
@@ -56,6 +61,7 @@ results/
   summary_stats.csv
   case_study.csv
   figures/
+  sr_bicubic/
   experimental/
 
 docs/
@@ -123,6 +129,37 @@ python scripts/make_case_board_compact.py \
 ```bash
 python scripts/validate_results.py
 ```
+
+## SR Bicubic Benchmark
+
+The SR benchmark extension evaluates bicubic LR inputs on five standard
+super-resolution test sets: Set5, Set14, B100, Urban100, and Manga109. The
+current run covers X2, X3, and X4 scales, for 984 evaluated image-scale pairs.
+
+```bash
+python scripts/eval_sr_bicubic.py \
+  --dataset_root /path/to/datasets/imageSR \
+  --output_dir ./results/sr_bicubic
+
+python scripts/plot_sr_bicubic.py \
+  --summary_csv ./results/sr_bicubic/summary_by_dataset_scale.csv \
+  --failure_csv ./results/sr_bicubic/failure_cases.csv \
+  --fig_dir ./results/figures
+```
+
+The script reports both RGB full-reference metrics and Y-channel cropped
+metrics. The Y-channel metric uses a crop border equal to the SR scale, matching
+common SR evaluation practice.
+
+Current X4 Y-channel PSNR results:
+
+| Dataset | n | X4 PSNR-Y | X4 SSIM-Y |
+| --- | ---: | ---: | ---: |
+| Set5 | 5 | 27.720 | 0.815 |
+| Set14 | 14 | 24.991 | 0.695 |
+| B100 | 100 | 24.879 | 0.662 |
+| Manga109 | 109 | 22.279 | 0.740 |
+| Urban100 | 100 | 21.922 | 0.645 |
 
 ## Restoration Extension
 

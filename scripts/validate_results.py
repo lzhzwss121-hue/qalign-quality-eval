@@ -9,6 +9,9 @@ REQUIRED_FILES = [
     "results/summary_stats.csv",
     "results/case_study.csv",
     "results/experimental/raw_metrics_restoration_official.csv",
+    "results/sr_bicubic/raw_metrics.csv",
+    "results/sr_bicubic/summary_by_dataset_scale.csv",
+    "results/sr_bicubic/failure_cases.csv",
 ]
 
 REQUIRED_COLUMNS = {
@@ -53,6 +56,36 @@ REQUIRED_COLUMNS = {
         "lpips",
         "qalign_score",
     },
+    "results/sr_bicubic/raw_metrics.csv": {
+        "dataset",
+        "scale",
+        "image_name",
+        "base_name",
+        "hr_path",
+        "lr_path",
+        "psnr_rgb",
+        "ssim_rgb",
+        "psnr_y",
+        "ssim_y",
+    },
+    "results/sr_bicubic/summary_by_dataset_scale.csv": {
+        "dataset",
+        "scale",
+        "n",
+        "mean_psnr_y",
+        "mean_ssim_y",
+        "mean_psnr_rgb",
+        "mean_ssim_rgb",
+    },
+    "results/sr_bicubic/failure_cases.csv": {
+        "case_type",
+        "dataset",
+        "scale",
+        "image_name",
+        "base_name",
+        "psnr_y",
+        "ssim_y",
+    },
 }
 
 
@@ -68,7 +101,22 @@ def validate_file(path: str) -> pd.DataFrame:
     if missing:
         raise ValueError(f"{path} is missing columns: {sorted(missing)}")
 
-    metric_cols = [c for c in ["psnr", "ssim", "lpips", "qalign_score"] if c in df.columns]
+    metric_cols = [
+        c
+        for c in [
+            "psnr",
+            "ssim",
+            "lpips",
+            "qalign_score",
+            "psnr_rgb",
+            "ssim_rgb",
+            "psnr_y",
+            "ssim_y",
+            "mean_psnr_y",
+            "mean_ssim_y",
+        ]
+        if c in df.columns
+    ]
     for col in metric_cols:
         if df[col].isna().any():
             raise ValueError(f"{path} contains NaN values in {col}")
@@ -91,6 +139,10 @@ def main():
     restoration = pd.read_csv("results/experimental/raw_metrics_restoration_official.csv")
     print("\nRestoration method counts:")
     print(restoration["method"].value_counts().sort_index().to_string())
+
+    sr = pd.read_csv("results/sr_bicubic/raw_metrics.csv")
+    print("\nSR bicubic dataset counts:")
+    print(sr.groupby(["dataset", "scale"]).size().to_string())
 
 
 if __name__ == "__main__":
