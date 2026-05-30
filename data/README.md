@@ -48,3 +48,26 @@ data/images_restoration/
 
 All methods should be evaluated against the same reference images and the same
 crop-border setting.
+
+## SR Model Output Comparison
+
+```text
+datasets/imageSR/
+  Set5/HR/
+  Set5/LR_bicubic/X4/
+  Set14/HR/
+  ...
+
+model_outputs/
+  SwinIR/Set5/
+  SwinIR/Set14/
+  SwinIR/B100/
+  SwinIR/Urban100/
+  SwinIR/Manga109/
+  MambaIR/...
+  MambaIRv2/...
+```
+
+The output evaluator normalizes suffixes such as `x4_SwinIR`,
+`x4_MambaIRv2`, and `_LRBI_x4_MambaIRv2` so predictions can be matched to HR
+references.

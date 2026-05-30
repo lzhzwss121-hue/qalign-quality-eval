@@ -15,6 +15,7 @@ trustworthy multimodal evaluation.
 - **Zero-shot VLM quality score:** Q-Align / OneAlign
 - **Image degradation settings:** bicubic downsampling, blur, and noise
 - **SR benchmark extension:** Set5, Set14, B100, Urban100, and Manga109
+- **SR model comparison:** Bicubic, SwinIR, MambaIR, and MambaIRv2
 - **Experimental restoration extension:** SwinIR and MambaIRv2 output evaluation
 
 This repository focuses on evaluation and analysis rather than training new
@@ -23,8 +24,9 @@ restoration models.
 ## Key Findings
 
 The current pilot benchmark contains 42 degraded images across three degradation
-types, 984 bicubic super-resolution benchmark samples, and 28 restoration outputs
-for the restoration extension.
+types, 984 bicubic super-resolution benchmark samples, 984 neural SR outputs
+from SwinIR, MambaIR, and MambaIRv2, and 28 restoration outputs for the
+restoration extension.
 
 | Analysis | Main Observation |
 | --- | --- |
@@ -33,6 +35,7 @@ for the restoration extension.
 | Overall LPIPS vs Q-Align | Moderate inverse correlation: Pearson -0.639, Spearman -0.669 |
 | Bicubic / blur subsets | Q-Align aligns more with LPIPS than with PSNR |
 | SR bicubic benchmark | X4 bicubic is hardest on Urban100 and Manga109 |
+| SR restored-output comparison | MambaIRv2 is best on all five X4 test sets |
 | Restoration extension | Benchmark consistency issues can strongly affect metric interpretation |
 
 These findings suggest that zero-shot VLM-based quality scores capture a
@@ -51,6 +54,8 @@ scripts/
   validate_results.py                 # Lightweight result-file validation
   eval_sr_bicubic.py                  # Standard SR bicubic benchmark evaluation
   plot_sr_bicubic.py                  # SR benchmark plots and failure board
+  eval_sr_model_outputs.py            # Restored-output comparison evaluation
+  plot_sr_model_comparison.py         # Restored-output comparison plots
   experimental/
     generate_degradations.py
     run_eval_restoration.py
@@ -62,6 +67,7 @@ results/
   case_study.csv
   figures/
   sr_bicubic/
+  sr_model_comparison/
   experimental/
 
 docs/
@@ -161,6 +167,47 @@ Current X4 Y-channel PSNR results:
 | B100 | 100 | 25.954 | 0.685 |
 | Manga109 | 109 | 24.896 | 0.795 |
 | Urban100 | 100 | 23.136 | 0.673 |
+
+## SR Model Output Comparison
+
+The restored-output comparison evaluates saved X4 outputs from SwinIR, MambaIR,
+and MambaIRv2 against the same HR references and bicubic baseline. It uses the
+same cropped Y-channel PSNR/SSIM protocol as the bicubic benchmark. If model
+outputs are generated at `LR_size * scale`, the script crops the HR reference to
+the prediction size instead of resizing predictions.
+
+```bash
+python scripts/eval_sr_model_outputs.py \
+  --dataset_root /path/to/datasets/imageSR \
+  --scale 4 \
+  --method_dirs \
+    SwinIR=/path/to/SwinIR_SR_x4/visualization \
+    MambaIR=/path/to/MambaIR_SR_x4/visualization \
+    MambaIRv2=/path/to/MambaIRv2_SR_x4/visualization \
+  --bicubic_csv ./results/sr_bicubic/raw_metrics.csv \
+  --output_dir ./results/sr_model_comparison
+
+python scripts/plot_sr_model_comparison.py \
+  --raw_csv ./results/sr_model_comparison/raw_metrics_x4.csv \
+  --summary_csv ./results/sr_model_comparison/summary_by_method_dataset_x4.csv \
+  --improvement_csv ./results/sr_model_comparison/improvement_over_bicubic_x4.csv \
+  --case_csv ./results/sr_model_comparison/case_study_x4.csv \
+  --fig_dir ./results/figures
+```
+
+Current X4 Y-channel PSNR results:
+
+| Dataset | Bicubic | SwinIR | MambaIR | MambaIRv2 |
+| --- | ---: | ---: | ---: | ---: |
+| Set5 | 28.429 | 32.928 | 33.029 | 33.144 |
+| Set14 | 26.085 | 29.086 | 29.202 | 29.233 |
+| B100 | 25.954 | 27.925 | 27.979 | 27.995 |
+| Urban100 | 23.136 | 27.455 | 27.681 | 27.895 |
+| Manga109 | 24.896 | 32.036 | 32.317 | 32.567 |
+
+MambaIRv2 gives the largest gains over SwinIR on Urban100 (+0.440 dB) and
+Manga109 (+0.531 dB), which are the most structure- and texture-sensitive
+benchmarks in this set.
 
 ## Restoration Extension
 

@@ -27,8 +27,10 @@ and MambaIRv2 outputs under a fixed crop-border protocol.
 ## Current Results
 
 The degradation benchmark contains 42 samples: 14 bicubic, 14 blur, and 14 noise
-cases. The newly added SR bicubic benchmark contains 984 image-scale pairs from
-Set5, Set14, B100, Urban100, and Manga109 across X2, X3, and X4 scales.
+cases. The SR bicubic benchmark contains 984 image-scale pairs from Set5,
+Set14, B100, Urban100, and Manga109 across X2, X3, and X4 scales. The restored
+SR output comparison contains X4 outputs from SwinIR, MambaIR, and MambaIRv2 on
+the same five datasets.
 
 | Metric Pair | Pearson | Spearman | n |
 | --- | ---: | ---: | ---: |
@@ -72,6 +74,23 @@ super-resolution evaluation:
 | Manga109 | X3 | 109 | 26.951 | 0.864 |
 | Manga109 | X4 | 109 | 24.896 | 0.795 |
 
+The restored-output comparison shows that learned SR models provide a large
+improvement over bicubic interpolation at X4. MambaIRv2 has the highest
+Y-channel PSNR on all five datasets:
+
+| Dataset | Bicubic | SwinIR | MambaIR | MambaIRv2 |
+| --- | ---: | ---: | ---: | ---: |
+| Set5 | 28.429 | 32.928 | 33.029 | 33.144 |
+| Set14 | 26.085 | 29.086 | 29.202 | 29.233 |
+| B100 | 25.954 | 27.925 | 27.979 | 27.995 |
+| Urban100 | 23.136 | 27.455 | 27.681 | 27.895 |
+| Manga109 | 24.896 | 32.036 | 32.317 | 32.567 |
+
+The largest MambaIRv2 gains over SwinIR appear on Urban100 (+0.440 dB) and
+Manga109 (+0.531 dB). This matches the hypothesis that attentive state-space
+restoration is more useful on datasets with long-range repetitive structures,
+building facades, text-like edges, and manga line art.
+
 ## Interpretation
 
 The pilot result supports four cautious conclusions:
@@ -84,10 +103,14 @@ The pilot result supports four cautious conclusions:
    claims.
 4. Urban100 and Manga109 show a sharper quality drop at X4, which makes them
    useful stress tests for structure- and texture-sensitive restoration methods.
+5. The X4 output comparison supports MambaIRv2 as the strongest model among
+   SwinIR, MambaIR, and MambaIRv2 under the current protocol, especially on
+   Urban100 and Manga109.
 
 ## Next Steps
 
-- Expand the benchmark to Set5, Set14, BSD100, and Urban100 subsets.
+- Add X2 and X3 restored-output comparisons when full prediction folders are
+  available.
 - Add JPEG compression and mixed-degradation cases.
 - Compare Q-Align with CLIP-IQA and MUSIQ.
 - Add more restoration methods under the same official evaluation protocol.

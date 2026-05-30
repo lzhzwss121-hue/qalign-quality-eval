@@ -105,16 +105,62 @@ LR image with bicubic interpolation and computes RGB metrics plus Y-channel
 metrics. The Y-channel metrics use 255 as the data range. The default Y-channel
 crop border is equal to the SR scale.
 
+## SR Model Output Comparison
+
+The restored-output comparison expects saved model predictions organized by
+dataset:
+
+```text
+method_outputs/
+  Set5/
+  Set14/
+  B100/
+  Urban100/
+  Manga109/
+```
+
+Run the X4 comparison:
+
+```bash
+python scripts/eval_sr_model_outputs.py \
+  --dataset_root /path/to/datasets/imageSR \
+  --scale 4 \
+  --method_dirs \
+    SwinIR=/path/to/SwinIR/visualization \
+    MambaIR=/path/to/MambaIR/visualization \
+    MambaIRv2=/path/to/MambaIRv2/visualization \
+  --bicubic_csv ./results/sr_bicubic/raw_metrics.csv \
+  --output_dir ./results/sr_model_comparison
+```
+
+Generate comparison plots:
+
+```bash
+MPLCONFIGDIR=/tmp/qalign_mpl_cache python scripts/plot_sr_model_comparison.py \
+  --raw_csv ./results/sr_model_comparison/raw_metrics_x4.csv \
+  --summary_csv ./results/sr_model_comparison/summary_by_method_dataset_x4.csv \
+  --improvement_csv ./results/sr_model_comparison/improvement_over_bicubic_x4.csv \
+  --case_csv ./results/sr_model_comparison/case_study_x4.csv \
+  --fig_dir ./results/figures
+```
+
+If prediction dimensions differ from the original HR dimensions because the HR
+image is not divisible by the SR scale, the script crops the HR image to the
+prediction size. It does not resize restored predictions for metric computation.
+
 ## Important Evaluation Details
 
-- Predicted images are resized to match the protocol-cropped reference image if
-  needed.
+- The degradation and diagnostic restoration scripts may resize predictions to
+  match references when needed; the SR model-output comparison does not resize
+  restored predictions for metric computation.
 - LPIPS is computed on RGB tensors normalized to `[-1, 1]`.
 - Q-Align is scored on the predicted/restored image only.
 - Restoration evaluation supports crop-border evaluation through
   `--crop_border`.
 - SR bicubic evaluation reports both RGB and cropped Y-channel PSNR/SSIM after
   HR mod-cropping to `LR_size * scale`.
+- SR model-output comparison crops HR references to prediction dimensions when
+  needed, then applies the same cropped Y-channel metric protocol.
 
 ## Known Sources of Error
 

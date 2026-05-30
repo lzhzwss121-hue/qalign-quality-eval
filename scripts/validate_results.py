@@ -12,6 +12,10 @@ REQUIRED_FILES = [
     "results/sr_bicubic/raw_metrics.csv",
     "results/sr_bicubic/summary_by_dataset_scale.csv",
     "results/sr_bicubic/failure_cases.csv",
+    "results/sr_model_comparison/raw_metrics_x4.csv",
+    "results/sr_model_comparison/summary_by_method_dataset_x4.csv",
+    "results/sr_model_comparison/improvement_over_bicubic_x4.csv",
+    "results/sr_model_comparison/case_study_x4.csv",
 ]
 
 REQUIRED_COLUMNS = {
@@ -86,6 +90,52 @@ REQUIRED_COLUMNS = {
         "psnr_y",
         "ssim_y",
     },
+    "results/sr_model_comparison/raw_metrics_x4.csv": {
+        "method",
+        "dataset",
+        "scale",
+        "image_name",
+        "base_name",
+        "hr_path",
+        "lr_path",
+        "pred_path",
+        "psnr_rgb",
+        "ssim_rgb",
+        "psnr_y",
+        "ssim_y",
+    },
+    "results/sr_model_comparison/summary_by_method_dataset_x4.csv": {
+        "method",
+        "dataset",
+        "scale",
+        "n",
+        "mean_psnr_y",
+        "mean_ssim_y",
+        "mean_psnr_rgb",
+        "mean_ssim_rgb",
+    },
+    "results/sr_model_comparison/improvement_over_bicubic_x4.csv": {
+        "method",
+        "dataset",
+        "scale",
+        "n",
+        "mean_delta_psnr_y",
+        "mean_delta_ssim_y",
+        "win_rate_psnr_y",
+        "win_rate_ssim_y",
+    },
+    "results/sr_model_comparison/case_study_x4.csv": {
+        "case_type",
+        "dataset",
+        "scale",
+        "base_name",
+        "image_name",
+        "psnr_y_Bicubic",
+        "psnr_y_SwinIR",
+        "psnr_y_MambaIR",
+        "psnr_y_MambaIRv2",
+        "score",
+    },
 }
 
 
@@ -114,6 +164,10 @@ def validate_file(path: str) -> pd.DataFrame:
             "ssim_y",
             "mean_psnr_y",
             "mean_ssim_y",
+            "mean_delta_psnr_y",
+            "mean_delta_ssim_y",
+            "win_rate_psnr_y",
+            "win_rate_ssim_y",
         ]
         if c in df.columns
     ]
@@ -143,6 +197,10 @@ def main():
     sr = pd.read_csv("results/sr_bicubic/raw_metrics.csv")
     print("\nSR bicubic dataset counts:")
     print(sr.groupby(["dataset", "scale"]).size().to_string())
+
+    sr_models = pd.read_csv("results/sr_model_comparison/raw_metrics_x4.csv")
+    print("\nSR model-comparison counts:")
+    print(sr_models.groupby(["method", "dataset", "scale"]).size().to_string())
 
 
 if __name__ == "__main__":

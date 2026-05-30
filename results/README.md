@@ -33,7 +33,8 @@ PSNR but low Q-Align or low PSNR but high Q-Align.
 
 ## Figures
 
-`figures/` contains generated scatter plots and a compact case-study board:
+`figures/` contains generated scatter plots, case-study boards, and SR
+comparison figures:
 
 - `scatter_psnr_qalign.png`
 - `scatter_ssim_qalign.png`
@@ -89,3 +90,37 @@ Generated SR figures:
 - `figures/sr_bicubic_ssim_y_by_scale.png`
 - `figures/sr_bicubic_x4_psnr_y_by_dataset.png`
 - `figures/sr_bicubic_x4_failure_board.png`
+
+## SR Model Output Comparison
+
+`sr_model_comparison/raw_metrics_x4.csv` contains per-image X4 metrics for
+Bicubic, SwinIR, MambaIR, and MambaIRv2. The neural outputs are evaluated by
+cropping HR references to the prediction size when the original HR dimensions are
+not divisible by the scale.
+
+`sr_model_comparison/summary_by_method_dataset_x4.csv` stores aggregate
+Y-channel and RGB PSNR/SSIM by method and dataset:
+
+| Dataset | Bicubic | SwinIR | MambaIR | MambaIRv2 |
+| --- | ---: | ---: | ---: | ---: |
+| Set5 | 28.429 | 32.928 | 33.029 | 33.144 |
+| Set14 | 26.085 | 29.086 | 29.202 | 29.233 |
+| B100 | 25.954 | 27.925 | 27.979 | 27.995 |
+| Urban100 | 23.136 | 27.455 | 27.681 | 27.895 |
+| Manga109 | 24.896 | 32.036 | 32.317 | 32.567 |
+
+`sr_model_comparison/improvement_over_bicubic_x4.csv` reports average gains and
+win rates over bicubic interpolation. MambaIRv2 improves over bicubic by 2.041 dB
+on B100, 3.148 dB on Set14, 4.715 dB on Set5, 4.759 dB on Urban100, and 7.672 dB
+on Manga109.
+
+`sr_model_comparison/case_study_x4.csv` stores representative cases where
+MambaIRv2 gains most over SwinIR or bicubic, plus low-PSNR hard cases.
+
+Generated SR model-comparison figures:
+
+- `figures/sr_model_x4_psnr_y_by_dataset.png`
+- `figures/sr_model_x4_ssim_y_by_dataset.png`
+- `figures/sr_model_x4_delta_psnr_y_over_bicubic.png`
+- `figures/sr_model_x4_win_rate_over_bicubic.png`
+- `figures/sr_model_x4_qualitative_board.png`
