@@ -56,6 +56,7 @@ scripts/
   plot_sr_bicubic.py                  # SR benchmark plots and failure board
   eval_sr_model_outputs.py            # Restored-output comparison evaluation
   plot_sr_model_comparison.py         # Restored-output comparison plots
+  eval_sr_model_qalign.py             # Q-Align / LPIPS scoring for SR outputs
   experimental/
     generate_degradations.py
     run_eval_restoration.py
@@ -208,6 +209,23 @@ Current X4 Y-channel PSNR results:
 MambaIRv2 gives the largest gains over SwinIR on Urban100 (+0.440 dB) and
 Manga109 (+0.531 dB), which are the most structure- and texture-sensitive
 benchmarks in this set.
+
+### Optional Q-Align / LPIPS scoring
+
+For GPU servers, the saved SR outputs can be further scored with LPIPS and
+Q-Align:
+
+```bash
+python scripts/eval_sr_model_qalign.py \
+  --input_csv ./results/sr_model_comparison/raw_metrics_x4.csv \
+  --output_csv ./results/sr_model_qalign/raw_metrics_x4.csv \
+  --summary_csv ./results/sr_model_qalign/summary_by_method_dataset_x4.csv \
+  --correlation_csv ./results/sr_model_qalign/correlations_x4.csv \
+  --case_csv ./results/sr_model_qalign/disagreement_cases_x4.csv \
+  --resume
+```
+
+Use `--max_images 20` for a quick smoke test before running the full set.
 
 ## Restoration Extension
 

@@ -148,6 +148,35 @@ If prediction dimensions differ from the original HR dimensions because the HR
 image is not divisible by the SR scale, the script crops the HR image to the
 prediction size. It does not resize restored predictions for metric computation.
 
+### Q-Align / LPIPS scoring on SR outputs
+
+Run a small smoke test first:
+
+```bash
+python scripts/eval_sr_model_qalign.py \
+  --input_csv ./results/sr_model_comparison/raw_metrics_x4.csv \
+  --output_csv ./results/sr_model_qalign/raw_metrics_x4.csv \
+  --summary_csv ./results/sr_model_qalign/summary_by_method_dataset_x4.csv \
+  --correlation_csv ./results/sr_model_qalign/correlations_x4.csv \
+  --case_csv ./results/sr_model_qalign/disagreement_cases_x4.csv \
+  --max_images 20
+```
+
+Then run the full evaluation with resume enabled:
+
+```bash
+python scripts/eval_sr_model_qalign.py \
+  --input_csv ./results/sr_model_comparison/raw_metrics_x4.csv \
+  --output_csv ./results/sr_model_qalign/raw_metrics_x4.csv \
+  --summary_csv ./results/sr_model_qalign/summary_by_method_dataset_x4.csv \
+  --correlation_csv ./results/sr_model_qalign/correlations_x4.csv \
+  --case_csv ./results/sr_model_qalign/disagreement_cases_x4.csv \
+  --resume
+```
+
+The script scores generated images with Q-Align and computes LPIPS against the
+same cropped references used by the SR model-output comparison.
+
 ## Important Evaluation Details
 
 - The degradation and diagnostic restoration scripts may resize predictions to
