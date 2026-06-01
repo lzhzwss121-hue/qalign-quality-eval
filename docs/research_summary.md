@@ -30,7 +30,8 @@ The degradation benchmark contains 42 samples: 14 bicubic, 14 blur, and 14 noise
 cases. The SR bicubic benchmark contains 984 image-scale pairs from Set5,
 Set14, B100, Urban100, and Manga109 across X2, X3, and X4 scales. The restored
 SR output comparison contains X4 outputs from SwinIR, MambaIR, and MambaIRv2 on
-the same five datasets.
+the same five datasets. The SR Q-Align extension contains 1,312 X4 rows after
+adding Bicubic, LPIPS, and Q-Align scores.
 
 | Metric Pair | Pearson | Spearman | n |
 | --- | ---: | ---: | ---: |
@@ -91,9 +92,25 @@ Manga109 (+0.531 dB). This matches the hypothesis that attentive state-space
 restoration is more useful on datasets with long-range repetitive structures,
 building facades, text-like edges, and manga line art.
 
+The SR Q-Align extension shows that Q-Align strongly separates learned SR
+outputs from bicubic interpolation, but it is not identical to the PSNR ranking
+among learned methods:
+
+| Dataset | Bicubic | SwinIR | MambaIR | MambaIRv2 |
+| --- | ---: | ---: | ---: | ---: |
+| Set5 | 1.653 | 3.102 | 3.045 | 3.057 |
+| Set14 | 1.963 | 3.322 | 3.285 | 3.292 |
+| B100 | 1.732 | 2.980 | 2.946 | 2.956 |
+| Urban100 | 2.857 | 4.378 | 4.360 | 4.359 |
+| Manga109 | 2.904 | 3.652 | 3.637 | 3.639 |
+
+Across all 1,312 SR output rows, LPIPS has the strongest relationship with
+Q-Align (Pearson -0.664, Spearman -0.670), followed by SSIM-Y (0.487, 0.501)
+and PSNR-Y (0.253, 0.278).
+
 ## Interpretation
 
-The pilot result supports four cautious conclusions:
+The pilot result supports six cautious conclusions:
 
 1. Q-Align is not redundant with PSNR or SSIM in this setting.
 2. Q-Align is closer to perceptual similarity than to pixel-level fidelity in
@@ -106,6 +123,8 @@ The pilot result supports four cautious conclusions:
 5. The X4 output comparison supports MambaIRv2 as the strongest model among
    SwinIR, MambaIR, and MambaIRv2 under the current protocol, especially on
    Urban100 and Manga109.
+6. On SR outputs, Q-Align is closer to LPIPS than to PSNR-Y, and the remaining
+   method-ranking differences are useful cases for metric-disagreement analysis.
 
 ## Next Steps
 

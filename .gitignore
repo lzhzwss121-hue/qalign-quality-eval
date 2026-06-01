@@ -18,6 +18,7 @@ uploads/
 *.ckpt
 *.safetensors
 *.log
+results/sr_model_qalign/*_smoke.csv
 
 .env
 venv/

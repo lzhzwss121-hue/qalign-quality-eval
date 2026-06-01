@@ -17,7 +17,9 @@ q-future/one-align
 ```
 
 The scripts use `trust_remote_code=True` because the model repository defines a
-custom scoring interface. A CUDA GPU is recommended for practical runtime.
+custom scoring interface. Use the pinned `transformers==4.36.1` dependency in
+`requirements.txt`; newer versions can break the OneAlign remote-code imports.
+A CUDA GPU is recommended for practical runtime.
 
 ## Data Layout
 
@@ -154,11 +156,12 @@ Run a small smoke test first:
 
 ```bash
 python scripts/eval_sr_model_qalign.py \
+  --qalign_model /path/to/one-align \
   --input_csv ./results/sr_model_comparison/raw_metrics_x4.csv \
-  --output_csv ./results/sr_model_qalign/raw_metrics_x4.csv \
-  --summary_csv ./results/sr_model_qalign/summary_by_method_dataset_x4.csv \
-  --correlation_csv ./results/sr_model_qalign/correlations_x4.csv \
-  --case_csv ./results/sr_model_qalign/disagreement_cases_x4.csv \
+  --output_csv ./results/sr_model_qalign/raw_metrics_x4_smoke.csv \
+  --summary_csv ./results/sr_model_qalign/summary_by_method_dataset_x4_smoke.csv \
+  --correlation_csv ./results/sr_model_qalign/correlations_x4_smoke.csv \
+  --case_csv ./results/sr_model_qalign/disagreement_cases_x4_smoke.csv \
   --max_images 20
 ```
 
@@ -166,6 +169,7 @@ Then run the full evaluation with resume enabled:
 
 ```bash
 python scripts/eval_sr_model_qalign.py \
+  --qalign_model /path/to/one-align \
   --input_csv ./results/sr_model_comparison/raw_metrics_x4.csv \
   --output_csv ./results/sr_model_qalign/raw_metrics_x4.csv \
   --summary_csv ./results/sr_model_qalign/summary_by_method_dataset_x4.csv \
@@ -176,6 +180,16 @@ python scripts/eval_sr_model_qalign.py \
 
 The script scores generated images with Q-Align and computes LPIPS against the
 same cropped references used by the SR model-output comparison.
+
+Generate the SR Q-Align figures:
+
+```bash
+MPLCONFIGDIR=/tmp/qalign_mpl_cache python scripts/plot_sr_model_qalign.py \
+  --raw_csv ./results/sr_model_qalign/raw_metrics_x4.csv \
+  --summary_csv ./results/sr_model_qalign/summary_by_method_dataset_x4.csv \
+  --correlation_csv ./results/sr_model_qalign/correlations_x4.csv \
+  --fig_dir ./results/figures
+```
 
 ## Important Evaluation Details
 

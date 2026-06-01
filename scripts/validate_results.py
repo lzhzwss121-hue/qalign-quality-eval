@@ -16,6 +16,10 @@ REQUIRED_FILES = [
     "results/sr_model_comparison/summary_by_method_dataset_x4.csv",
     "results/sr_model_comparison/improvement_over_bicubic_x4.csv",
     "results/sr_model_comparison/case_study_x4.csv",
+    "results/sr_model_qalign/raw_metrics_x4.csv",
+    "results/sr_model_qalign/summary_by_method_dataset_x4.csv",
+    "results/sr_model_qalign/correlations_x4.csv",
+    "results/sr_model_qalign/disagreement_cases_x4.csv",
 ]
 
 REQUIRED_COLUMNS = {
@@ -136,6 +140,59 @@ REQUIRED_COLUMNS = {
         "psnr_y_MambaIRv2",
         "score",
     },
+    "results/sr_model_qalign/raw_metrics_x4.csv": {
+        "method",
+        "dataset",
+        "scale",
+        "image_name",
+        "base_name",
+        "hr_path",
+        "lr_path",
+        "pred_path",
+        "error",
+        "width",
+        "height",
+        "crop_border",
+        "psnr_rgb",
+        "ssim_rgb",
+        "psnr_y",
+        "ssim_y",
+        "lpips",
+        "qalign_score",
+    },
+    "results/sr_model_qalign/summary_by_method_dataset_x4.csv": {
+        "method",
+        "dataset",
+        "scale",
+        "n",
+        "mean_psnr_y",
+        "mean_ssim_y",
+        "mean_lpips",
+        "mean_qalign",
+        "median_lpips",
+        "median_qalign",
+    },
+    "results/sr_model_qalign/correlations_x4.csv": {
+        "group",
+        "metric_x",
+        "metric_y",
+        "pearson",
+        "spearman",
+        "n",
+    },
+    "results/sr_model_qalign/disagreement_cases_x4.csv": {
+        "case_type",
+        "method",
+        "dataset",
+        "scale",
+        "image_name",
+        "base_name",
+        "psnr_y",
+        "ssim_y",
+        "lpips",
+        "qalign_score",
+        "score",
+    },
 }
 
 
@@ -168,6 +225,12 @@ def validate_file(path: str) -> pd.DataFrame:
             "mean_delta_ssim_y",
             "win_rate_psnr_y",
             "win_rate_ssim_y",
+            "mean_lpips",
+            "mean_qalign",
+            "median_lpips",
+            "median_qalign",
+            "pearson",
+            "spearman",
         ]
         if c in df.columns
     ]
@@ -201,6 +264,13 @@ def main():
     sr_models = pd.read_csv("results/sr_model_comparison/raw_metrics_x4.csv")
     print("\nSR model-comparison counts:")
     print(sr_models.groupby(["method", "dataset", "scale"]).size().to_string())
+
+    sr_qalign = pd.read_csv("results/sr_model_qalign/raw_metrics_x4.csv")
+    errors = sr_qalign["error"].fillna("")
+    if (errors != "").any():
+        raise ValueError("results/sr_model_qalign/raw_metrics_x4.csv contains Q-Align errors")
+    print("\nSR model Q-Align counts:")
+    print(sr_qalign.groupby(["method", "dataset", "scale"]).size().to_string())
 
 
 if __name__ == "__main__":

@@ -124,3 +124,40 @@ Generated SR model-comparison figures:
 - `figures/sr_model_x4_delta_psnr_y_over_bicubic.png`
 - `figures/sr_model_x4_win_rate_over_bicubic.png`
 - `figures/sr_model_x4_qualitative_board.png`
+
+## SR Q-Align / LPIPS Extension
+
+`sr_model_qalign/raw_metrics_x4.csv` contains 1,312 X4 rows for Bicubic, SwinIR,
+MambaIR, and MambaIRv2 across Set5, Set14, B100, Urban100, and Manga109. Each
+row adds LPIPS and Q-Align scores to the SR model-comparison metrics.
+
+`sr_model_qalign/summary_by_method_dataset_x4.csv` stores aggregate LPIPS and
+Q-Align values. The headline mean Q-Align scores are:
+
+| Dataset | Bicubic | SwinIR | MambaIR | MambaIRv2 |
+| --- | ---: | ---: | ---: | ---: |
+| Set5 | 1.653 | 3.102 | 3.045 | 3.057 |
+| Set14 | 1.963 | 3.322 | 3.285 | 3.292 |
+| B100 | 1.732 | 2.980 | 2.946 | 2.956 |
+| Urban100 | 2.857 | 4.378 | 4.360 | 4.359 |
+| Manga109 | 2.904 | 3.652 | 3.637 | 3.639 |
+
+`sr_model_qalign/correlations_x4.csv` shows that LPIPS has the strongest
+relationship with Q-Align on the full X4 output set:
+
+| Metric Pair | Pearson | Spearman | n |
+| --- | ---: | ---: | ---: |
+| PSNR-Y vs Q-Align | 0.253 | 0.278 | 1312 |
+| SSIM-Y vs Q-Align | 0.487 | 0.501 | 1312 |
+| LPIPS vs Q-Align | -0.664 | -0.670 | 1312 |
+
+`sr_model_qalign/disagreement_cases_x4.csv` stores representative cases where
+PSNR/LPIPS and Q-Align disagree. These cases are intended for qualitative error
+analysis rather than leaderboard ranking.
+
+Generated SR Q-Align figures:
+
+- `figures/sr_model_x4_qalign_by_dataset.png`
+- `figures/sr_model_x4_lpips_by_dataset.png`
+- `figures/sr_model_x4_qalign_correlations.png`
+- `figures/sr_model_x4_lpips_vs_qalign.png`

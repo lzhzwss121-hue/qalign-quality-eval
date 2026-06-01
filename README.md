@@ -25,8 +25,8 @@ restoration models.
 
 The current pilot benchmark contains 42 degraded images across three degradation
 types, 984 bicubic super-resolution benchmark samples, 984 neural SR outputs
-from SwinIR, MambaIR, and MambaIRv2, and 28 restoration outputs for the
-restoration extension.
+from SwinIR, MambaIR, and MambaIRv2, 1,312 Q-Align/LPIPS-scored X4 SR outputs,
+and 28 restoration outputs for the restoration extension.
 
 | Analysis | Main Observation |
 | --- | --- |
@@ -35,7 +35,8 @@ restoration extension.
 | Overall LPIPS vs Q-Align | Moderate inverse correlation: Pearson -0.639, Spearman -0.669 |
 | Bicubic / blur subsets | Q-Align aligns more with LPIPS than with PSNR |
 | SR bicubic benchmark | X4 bicubic is hardest on Urban100 and Manga109 |
-| SR restored-output comparison | MambaIRv2 is best on all five X4 test sets |
+| SR restored-output comparison | MambaIRv2 is best by Y-channel PSNR on all five X4 test sets |
+| SR Q-Align extension | LPIPS has the strongest correlation with Q-Align: Pearson -0.664, Spearman -0.670 |
 | Restoration extension | Benchmark consistency issues can strongly affect metric interpretation |
 
 These findings suggest that zero-shot VLM-based quality scores capture a
@@ -57,6 +58,7 @@ scripts/
   eval_sr_model_outputs.py            # Restored-output comparison evaluation
   plot_sr_model_comparison.py         # Restored-output comparison plots
   eval_sr_model_qalign.py             # Q-Align / LPIPS scoring for SR outputs
+  plot_sr_model_qalign.py             # Q-Align / LPIPS plots for SR outputs
   experimental/
     generate_degradations.py
     run_eval_restoration.py
@@ -69,6 +71,7 @@ results/
   figures/
   sr_bicubic/
   sr_model_comparison/
+  sr_model_qalign/
   experimental/
 
 docs/
@@ -90,7 +93,9 @@ pip install -r requirements.txt
 ```
 
 Q-Align / OneAlign uses Hugging Face model loading with
-`trust_remote_code=True`. A CUDA GPU is recommended.
+`trust_remote_code=True`. The pinned `transformers==4.36.1` dependency is used
+for compatibility with the OneAlign remote-code implementation. A CUDA GPU is
+recommended.
 
 ### 2. Prepare data
 
@@ -217,15 +222,43 @@ Q-Align:
 
 ```bash
 python scripts/eval_sr_model_qalign.py \
+  --qalign_model /path/to/one-align \
+  --input_csv ./results/sr_model_comparison/raw_metrics_x4.csv \
+  --output_csv ./results/sr_model_qalign/raw_metrics_x4_smoke.csv \
+  --summary_csv ./results/sr_model_qalign/summary_by_method_dataset_x4_smoke.csv \
+  --correlation_csv ./results/sr_model_qalign/correlations_x4_smoke.csv \
+  --case_csv ./results/sr_model_qalign/disagreement_cases_x4_smoke.csv \
+  --max_images 20
+```
+
+```bash
+python scripts/eval_sr_model_qalign.py \
+  --qalign_model /path/to/one-align \
   --input_csv ./results/sr_model_comparison/raw_metrics_x4.csv \
   --output_csv ./results/sr_model_qalign/raw_metrics_x4.csv \
   --summary_csv ./results/sr_model_qalign/summary_by_method_dataset_x4.csv \
   --correlation_csv ./results/sr_model_qalign/correlations_x4.csv \
   --case_csv ./results/sr_model_qalign/disagreement_cases_x4.csv \
   --resume
+
+python scripts/plot_sr_model_qalign.py \
+  --raw_csv ./results/sr_model_qalign/raw_metrics_x4.csv \
+  --summary_csv ./results/sr_model_qalign/summary_by_method_dataset_x4.csv \
+  --correlation_csv ./results/sr_model_qalign/correlations_x4.csv \
+  --fig_dir ./results/figures
 ```
 
-Use `--max_images 20` for a quick smoke test before running the full set.
+Current X4 mean Q-Align results:
+
+| Dataset | Bicubic | SwinIR | MambaIR | MambaIRv2 |
+| --- | ---: | ---: | ---: | ---: |
+| Set5 | 1.653 | 3.102 | 3.045 | 3.057 |
+| Set14 | 1.963 | 3.322 | 3.285 | 3.292 |
+| B100 | 1.732 | 2.980 | 2.946 | 2.956 |
+| Urban100 | 2.857 | 4.378 | 4.360 | 4.359 |
+| Manga109 | 2.904 | 3.652 | 3.637 | 3.639 |
+
+The full SR Q-Align run contains 1,312 valid rows with no scoring errors.
 
 ## Restoration Extension
 
